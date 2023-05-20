@@ -67,6 +67,13 @@ async function run() {
       res.send(result)
     })
 
+    //post data or add car
+    app.post('/addCar',async(req,res)=>{
+      const user = req.body;
+      const result = await toyCollections.insertOne(user)
+      res.send(result)
+    })
+
 
 
     // Send a ping to confirm a successful connection
