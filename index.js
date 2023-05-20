@@ -33,6 +33,7 @@ async function run() {
     await client.connect();
 
     const toyCollections= client.db("toyCarLand").collection('toys');
+    const categoryCollection= client.db("toyCarLand").collection('categories')
 
     app.get('/toys', async(req,res)=>{
       const result = await toyCollections.find().toArray();
@@ -52,6 +53,13 @@ async function run() {
       const result =await toyCollections.find(query).toArray()
       res.send(result)
     })
+
+    //categories load
+    app.get('/categories',async(req,res)=>{
+      const result = await categoryCollection.find().toArray()
+      res.send(result)
+    })
+
 
 
     // Send a ping to confirm a successful connection
