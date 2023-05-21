@@ -9,8 +9,7 @@ const port = process.env.PORT || 3000
 app.use(cors())
 app.use(express.json())
 
-const v = process.env.DB_USER;
-console.log(v);
+
 
 //mongodb 
 
@@ -44,7 +43,7 @@ async function run() {
 
     // load toys by subCategory name 
     app.get('/category-toys', async(req,res)=>{
-      console.log(req.query.subCategory);
+    
       let query={}
       if(req.query.subCategory)
       {
@@ -72,6 +71,18 @@ async function run() {
       const user = req.body;
       const result = await toyCollections.insertOne(user)
       res.send(result)
+    })
+
+    //load data of logged user by email
+    app.get('/myToys',async(req,res)=>{
+      console.log(req.query.email);
+      let query = {}
+      if(req.query.email){
+        query ={sellerEmail:req.query.email}
+      }
+      const result = await toyCollections.find(query).toArray()
+      res.send(result)
+
     })
 
 
