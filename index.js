@@ -31,10 +31,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const toyCollections= client.db("toyCarLand").collection('toys');
-    const categoryCollection= client.db("toyCarLand").collection('categories')
+    const toyCollections = client.db("toyCarLand").collection('toys');
+    const categoryCollection = client.db("toyCarLand").collection('categories')
 
-    app.get('/toys', async(req,res)=>{
+    app.get('/toys', async (req, res) => {
       const result = await toyCollections.find().toArray();
       res.send(result)
     })
@@ -42,58 +42,57 @@ async function run() {
 
 
     // load toys by subCategory name 
-    app.get('/category-toys', async(req,res)=>{
-    
-      let query={}
-      if(req.query.subCategory)
-      {
-        query ={subCategory: req.query.subCategory}
+    app.get('/category-toys', async (req, res) => {
+
+      let query = {}
+      if (req.query.subCategory) {
+        query = { subCategory: req.query.subCategory }
       }
-      const result =await toyCollections.find(query).toArray()
+      const result = await toyCollections.find(query).toArray()
       res.send(result)
     })
 
     //categories load
-    app.get('/categories',async(req,res)=>{
+    app.get('/categories', async (req, res) => {
       const result = await categoryCollection.find().toArray()
       res.send(result)
     })
 
-    app.get('/toy/:id',async(req,res)=>{
-      const id= req.params.id;
-      const query = {_id: new ObjectId(id)}
-      const result= await toyCollections.findOne(query)
+    app.get('/toy/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await toyCollections.findOne(query)
       res.send(result)
     })
 
     //post data or add car
-    app.post('/addCar',async(req,res)=>{
+    app.post('/addCar', async (req, res) => {
       const user = req.body;
       const result = await toyCollections.insertOne(user)
       res.send(result)
     })
 
     //load data of logged user by email
-    app.get('/myToys',async(req,res)=>{
+    app.get('/myToys', async (req, res) => {
       let query = {}
-      if(req.query.email){
-        query ={sellerEmail:req.query.email}
+      if (req.query.email) {
+        query = { sellerEmail: req.query.email }
       }
       const result = await toyCollections.find(query).toArray()
       res.send(result)
 
     })
 
-    app.put('/toy/:id',async(req,res)=>{
-      const id= req.params.id;
-      const filter= {_id:new ObjectId(id)};
-      const options= {upsert:true};
+    app.put('/toy/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
       const updatedCar = req.body;
 
-      const newCar={
-        $set:{
-          toyName:updatedCar.toyName,
-          carBrand:updatedCar.carBrand,
+      const newCar = {
+        $set: {
+          toyName: updatedCar.toyName,
+          carBrand: updatedCar.carBrand,
           pictureUrl: updatedCar.pictureUrl,
           sellerEmail: updatedCar.sellerEmail,
           sellerName: updatedCar.sellerName,
@@ -105,10 +104,16 @@ async function run() {
         }
 
       }
+      const result = await toyCollections.updateOne(filter, newCar, options)
+      res.send(result)
+    })
 
-     const result= await toyCollections.updateOne(filter,newCar,options)
-     console.log(result);
-     res.send(result)
+
+    app.delete('/toy/:id',async(req,res)=>{
+      const id= req.params.id;
+      const query ={_id:new ObjectId(id)};
+      const result = await toyCollections.deleteOne(query)
+      res.send(result)
     })
 
 
